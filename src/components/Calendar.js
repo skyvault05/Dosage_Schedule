@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   startOfWeek,
   format,
@@ -12,10 +12,13 @@ import {
   subMonths,
   toDate,
 } from "date-fns";
+import Dialog from "@material-ui/core/Dialog";
+import Todo from "./todoList/Todo";
 
 const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [listOpen, setListOpen] = useState(false);
 
   const renderHeader = () => {
     const dateFormat = "MMMM yyyy";
@@ -84,6 +87,7 @@ const Calendar = () => {
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
           </div>
+          //////////day 렌더부분
         );
         day = addDays(day, 1);
       }
@@ -94,12 +98,22 @@ const Calendar = () => {
       );
       days = [];
     }
+    rows.push(
+      <Dialog open={listOpen} onClose={handleClose} scroll="paper">
+        <Todo />
+      </Dialog>
+    );
 
     return <div className="body">{rows}</div>;
   };
 
+  const handleClose = () => {
+    setListOpen(false);
+  };
+
   const onDateClick = (day) => {
-    setSelectedDate({ day });
+    setListOpen(true);
+    setSelectedDate(day);
   };
   const nextMonth = () => {
     setCurrentMonth(addMonths(currentMonth, 1));
